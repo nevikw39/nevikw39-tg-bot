@@ -10,6 +10,7 @@ from telegram.ext import (
 )
 
 import db
+import restricted
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
@@ -20,6 +21,7 @@ logger = logging.getLogger(__name__)
 CMD, ADD, REMOVE, QUERY = range(4)
 
 
+@restricted.restricted
 def ptt(update: Update, context: CallbackContext) -> int:
     reply_keyboard = [['add', 'lst', 'remove']]
 
