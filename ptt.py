@@ -66,7 +66,7 @@ def remove(update: Update, context: CallbackContext) -> int:
     try:
         db.cur.executemany("DELETE FROM ptt WHERE id = %s", [(i.strip(),) for i in update.message.text.split('\n')])
         db.conn.commit()
-        update.message.reply_text("Succesfully added.")
+        update.message.reply_text("Succesfully removed.")
     except Exception as e:
         db.conn.rollback()
         update.message.reply_text(str(e))
