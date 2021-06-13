@@ -38,7 +38,7 @@ def cmd(update: Update, context: CallbackContext) -> int:
             db.cur.execute("SELECT id FROM ptt")
             update.message.reply_text(db.cur.fetchall())
         except Exception as e:
-            update.message.reply_text(repr(e))
+            update.message.reply_text(str(e))
 
         return ConversationHandler.END
     elif update.message.text == "add":
@@ -52,11 +52,11 @@ def cmd(update: Update, context: CallbackContext) -> int:
 def add(update: Update, context: CallbackContext) -> int:
     try:
         for id in update.message.text.split('\n'):
-            db.cur.execute(f"INSERT INTO ptt VALUES ({id})")
+            db.cur.execute(f"INSERT INTO ptt (id) VALUES ({id.strip()})")
         db.conn.commit()
         update.message.reply_text("Succesfully added.")
     except Exception as e:
-        update.message.reply_text(repr(e))
+        update.message.reply_text(str(e))
 
     return ConversationHandler.END
 
@@ -64,11 +64,11 @@ def add(update: Update, context: CallbackContext) -> int:
 def remove(update: Update, context: CallbackContext) -> int:
     try:
         for id in update.message.text.split('\n'):
-            db.cur.execute(f"DELETE FROM ptt WHERE id = {id}")
+            db.cur.execute(f"DELETE FROM ptt WHERE id = {id.strip()}")
         db.conn.commit()
         update.message.reply_text("Succesfully added.")
     except Exception as e:
-        update.message.reply_text(repr(e))
+        update.message.reply_text(str(e))
 
     return ConversationHandler.END
 
