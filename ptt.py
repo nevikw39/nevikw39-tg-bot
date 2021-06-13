@@ -38,19 +38,23 @@ def cmd(update: Update, context: CallbackContext) -> int:
         try:
             db.cur.execute("SELECT id FROM ptt")
             update.message.reply_text(
-                '\n'.join([i[0] for i in db.cur.fetchall()]))
+                '\n'.join([i[0] for i in db.cur.fetchall()]),
+                reply_markup=ReplyKeyboardRemove(),)
         except Exception as e:
             db.conn.rollback()
-            update.message.reply_text(str(e))
+            update.message.reply_text(str(e),
+                                      reply_markup=ReplyKeyboardRemove(),)
 
         return ConversationHandler.END
     elif update.message.text == "add":
         update.message.reply_text(
-            'Please input ids.\n/cancel to end conversation.')
+            'Please input ids.\n/cancel to end conversation.',
+            reply_markup=ReplyKeyboardRemove(),)
         return ADD
     elif update.message.text == "remove":
         update.message.reply_text(
-            'Please input ids.\n/cancel to end conversation.')
+            'Please input ids.\n/cancel to end conversation.',
+            reply_markup=ReplyKeyboardRemove(),)
         return REMOVE
 
 
