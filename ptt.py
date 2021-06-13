@@ -38,6 +38,7 @@ def cmd(update: Update, context: CallbackContext) -> int:
             db.cur.execute("SELECT id FROM ptt")
             update.message.reply_text(db.cur.fetchall())
         except Exception as e:
+            db.conn.rollback()
             update.message.reply_text(str(e))
 
         return ConversationHandler.END
@@ -55,6 +56,7 @@ def add(update: Update, context: CallbackContext) -> int:
         db.conn.commit()
         update.message.reply_text("Succesfully added.")
     except Exception as e:
+        db.conn.rollback()
         update.message.reply_text(str(e))
 
     return ConversationHandler.END
@@ -66,6 +68,7 @@ def remove(update: Update, context: CallbackContext) -> int:
         db.conn.commit()
         update.message.reply_text("Succesfully added.")
     except Exception as e:
+        db.conn.rollback()
         update.message.reply_text(str(e))
 
     return ConversationHandler.END
