@@ -51,8 +51,7 @@ def cmd(update: Update, context: CallbackContext) -> int:
 
 def add(update: Update, context: CallbackContext) -> int:
     try:
-        for id in update.message.text.split('\n'):
-            db.cur.execute(f"INSERT INTO ptt (id) VALUES ({id.strip()})")
+        db.cur.executemany("INSERT INTO ptt (id) VALUES (%s)", [(i.strip(),) for i in update.message.text.split('\n')])
         db.conn.commit()
         update.message.reply_text("Succesfully added.")
     except Exception as e:
@@ -63,8 +62,7 @@ def add(update: Update, context: CallbackContext) -> int:
 
 def remove(update: Update, context: CallbackContext) -> int:
     try:
-        for id in update.message.text.split('\n'):
-            db.cur.execute(f"DELETE FROM ptt WHERE id = {id.strip()}")
+        db.cur.executemany("DELETE FROM ptt WHERE id = %s", [(i.strip(),) for i in update.message.text.split('\n')])
         db.conn.commit()
         update.message.reply_text("Succesfully added.")
     except Exception as e:
