@@ -1,7 +1,7 @@
 import logging
 import os
 
-from telegram.ext import Updater
+from telegram.ext import (Updater, MessageHandler, Filters)
 
 import ptt
 import db
@@ -14,6 +14,11 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+def unknown(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id,
+                             text="Command not found.")
+
+
 def main() -> None:
     """Run the bot."""
 
@@ -22,6 +27,9 @@ def main() -> None:
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(ptt.conv_handler)
+
+    unknown_handler = MessageHandler(Filters.command, unknown)
+    dispatcher.add_handler(unknown_handler)
 
     updater.start_webhook(listen="0.0.0.0",
                           port=int(os.environ["PORT"]),
