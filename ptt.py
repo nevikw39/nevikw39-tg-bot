@@ -98,8 +98,8 @@ conv_handler = ConversationHandler(
     entry_points=[CommandHandler('ptt', ptt)],
     states={
         CMD: [MessageHandler(Filters.regex('^(add|lst|remove|query)$'), cmd)],
-        ADD: [MessageHandler(Filters.text, add)],
-        REMOVE: [MessageHandler(Filters.text, remove)],
+        ADD: [MessageHandler(Filters.text, add), CommandHandler('cancel', cancel)],
+        REMOVE: [MessageHandler(Filters.text, remove), CommandHandler('cancel', cancel)],
         # QUERY: [MessageHandler(Filters.text, query)],
     },
     fallbacks=[CommandHandler('cancel', cancel)],
