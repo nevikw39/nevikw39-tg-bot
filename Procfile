@@ -1,1 +1,1 @@
-web: bin/nevikw39-tg-bot
+web: python3 app.py
