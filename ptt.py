@@ -21,10 +21,11 @@ CMD, ADD, REMOVE, QUERY = range(4)
 
 
 def ptt(update: Update, context: CallbackContext) -> int:
-    reply_keyboard = [['add', 'lst', 'remove', 'query']]
+    reply_keyboard = [['add', 'lst', 'remove']]
 
     update.message.reply_text(
-        'Please choose a subcommand.',
+        'Please choose a subcommand.'
+        '/cancel to end conversation.',
         reply_markup=ReplyKeyboardMarkup(
             reply_keyboard, one_time_keyboard=True),
     )
@@ -36,23 +37,27 @@ def cmd(update: Update, context: CallbackContext) -> int:
     if update.message.text == "lst":
         try:
             db.cur.execute("SELECT id FROM ptt")
-            update.message.reply_text(db.cur.fetchall())
+            update.message.reply_text(
+                '\n'.join([i[0] for i in db.cur.fetchall()]))
         except Exception as e:
             db.conn.rollback()
             update.message.reply_text(str(e))
 
         return ConversationHandler.END
     elif update.message.text == "add":
-        update.message.reply_text('Please input ids.')
+        update.message.reply_text(
+            'Please input ids.\n/cancel to end conversation.')
         return ADD
     elif update.message.text == "remove":
-        update.message.reply_text('Please input ids.')
+        update.message.reply_text(
+            'Please input ids.\n/cancel to end conversation.')
         return REMOVE
 
 
 def add(update: Update, context: CallbackContext) -> int:
     try:
-        db.cur.executemany("INSERT INTO ptt (id) VALUES (%s)", [(i.strip(),) for i in update.message.text.split('\n')])
+        db.cur.executemany("INSERT INTO ptt (id) VALUES (%s)", [
+                           (i.strip(),) for i in update.message.text.split('\n')])
         db.conn.commit()
         update.message.reply_text("Succesfully added.")
     except Exception as e:
@@ -64,7 +69,8 @@ def add(update: Update, context: CallbackContext) -> int:
 
 def remove(update: Update, context: CallbackContext) -> int:
     try:
-        db.cur.executemany("DELETE FROM ptt WHERE id = %s", [(i.strip(),) for i in update.message.text.split('\n')])
+        db.cur.executemany("DELETE FROM ptt WHERE id = %s", [
+                           (i.strip(),) for i in update.message.text.split('\n')])
         db.conn.commit()
         update.message.reply_text("Succesfully removed.")
     except Exception as e:
