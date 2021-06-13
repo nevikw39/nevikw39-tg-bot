@@ -21,7 +21,6 @@ logger = logging.getLogger(__name__)
 CMD, ADD, REMOVE, QUERY = range(4)
 
 
-@restricted.restricted
 def ptt(update: Update, context: CallbackContext) -> int:
     reply_keyboard = [['add', 'lst', 'remove']]
 
@@ -60,6 +59,7 @@ def cmd(update: Update, context: CallbackContext) -> int:
         return REMOVE
 
 
+@restricted.restricted
 def add(update: Update, context: CallbackContext) -> int:
     try:
         db.cur.executemany("INSERT INTO ptt (id) VALUES (%s)", [
@@ -73,6 +73,7 @@ def add(update: Update, context: CallbackContext) -> int:
     return ConversationHandler.END
 
 
+@restricted.restricted
 def remove(update: Update, context: CallbackContext) -> int:
     try:
         db.cur.executemany("DELETE FROM ptt WHERE id = %s", [
