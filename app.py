@@ -4,6 +4,7 @@ import os
 from telegram import Update
 from telegram.ext import CallbackContext, Filters, MessageHandler, Updater
 
+import eval
 import ptt
 from db import conn
 
@@ -28,6 +29,7 @@ def main() -> None:
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(ptt.conv_handler)
+    dispatcher.add_handler(eval.conv_handler)
 
     unknown_handler = MessageHandler(Filters.command, unknown)
     dispatcher.add_handler(unknown_handler)
