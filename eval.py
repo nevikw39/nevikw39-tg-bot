@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 RESULT, = range(1)
 
 
-def eval(update: Update, context: CallbackContext) -> int:
+def eval_cmd(update: Update, context: CallbackContext) -> int:
     update.message.reply_text(
         'Please input experssion to evaluate.\n/cancel to end conversation.')
 
@@ -38,7 +38,7 @@ def cancel(update: Update, context: CallbackContext) -> int:
 
 
 conv_handler = ConversationHandler(
-    entry_points=[CommandHandler('eval', eval)],
+    entry_points=[CommandHandler('eval', eval_cmd)],
     states={
         RESULT: [MessageHandler(Filters.text, result)],
     },
