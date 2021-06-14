@@ -4,7 +4,7 @@ import os
 from telegram.ext import (Updater, MessageHandler, Filters)
 
 import ptt
-import db
+from db import conn
 
 # Enable logging
 logging.basicConfig(
@@ -41,5 +41,4 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
-    db.cur.close()
-    db.conn.close()
+    conn.close()
