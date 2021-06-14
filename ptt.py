@@ -1,13 +1,8 @@
 import logging
 
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
-from telegram.ext import (
-    CommandHandler,
-    MessageHandler,
-    Filters,
-    ConversationHandler,
-    CallbackContext,
-)
+from telegram.ext import (CallbackContext, CommandHandler, ConversationHandler,
+                          Filters, MessageHandler)
 
 from db import conn
 from restricted import restricted
@@ -96,6 +91,7 @@ def cancel(update: Update, context: CallbackContext) -> int:
     update.message.reply_text('End of Conversation.',
                               reply_markup=ReplyKeyboardRemove())
     return ConversationHandler.END
+
 
 with conn:
     with conn.cursor() as cur:

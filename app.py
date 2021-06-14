@@ -1,7 +1,8 @@
 import logging
 import os
 
-from telegram.ext import (Updater, MessageHandler, Filters)
+from telegram import Update
+from telegram.ext import CallbackContext, Filters, MessageHandler, Updater
 
 import ptt
 from db import conn
@@ -13,7 +14,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def unknown(update, context):
+def unknown(update: Update, context: CallbackContext):
     context.bot.send_message(chat_id=update.effective_chat.id,
                              text="Command not found.")
 
