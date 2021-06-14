@@ -6,7 +6,6 @@ from telegram.ext import (Updater, MessageHandler, Filters)
 import ptt
 from db import conn
 
-# Enable logging
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
 )
@@ -23,6 +22,7 @@ def main() -> None:
     """Run the bot."""
 
     updater = Updater(os.environ["TOKEN"])
+    logger.info(updater.bot.get_me())
 
     dispatcher = updater.dispatcher
 
