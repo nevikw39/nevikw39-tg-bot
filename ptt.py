@@ -10,7 +10,7 @@ from telegram.ext import (
 )
 
 import db
-import restricted
+from restricted import restricted
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
@@ -59,7 +59,7 @@ def cmd(update: Update, context: CallbackContext) -> int:
         return REMOVE
 
 
-@restricted.restricted
+@restricted
 def add(update: Update, context: CallbackContext) -> int:
     try:
         db.cur.executemany("INSERT INTO ptt (id) VALUES (%s)", [
@@ -73,7 +73,7 @@ def add(update: Update, context: CallbackContext) -> int:
     return ConversationHandler.END
 
 
-@restricted.restricted
+@restricted
 def remove(update: Update, context: CallbackContext) -> int:
     try:
         db.cur.executemany("DELETE FROM ptt WHERE id = %s", [
