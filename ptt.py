@@ -45,6 +45,7 @@ def cmd(update: Update, context: CallbackContext) -> int:
             conn.rollback()
             update.message.reply_text(str(e),
                                       reply_markup=ReplyKeyboardRemove())
+            logger.error(e)
 
         return ConversationHandler.END
     elif update.message.text == "add":
@@ -70,6 +71,7 @@ def add(update: Update, context: CallbackContext) -> int:
     except Exception as e:
         conn.rollback()
         update.message.reply_text(str(e))
+        logger.error(e)
 
     return ConversationHandler.END
 
@@ -85,6 +87,7 @@ def remove(update: Update, context: CallbackContext) -> int:
     except Exception as e:
         conn.rollback()
         update.message.reply_text(str(e))
+        logger.error(e)
 
     return ConversationHandler.END
 
