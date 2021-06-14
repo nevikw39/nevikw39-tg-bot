@@ -9,7 +9,7 @@ from telegram.ext import (
     CallbackContext,
 )
 
-import db
+from db import conn
 from restricted import restricted
 
 logging.basicConfig(
@@ -25,8 +25,7 @@ def ptt(update: Update, context: CallbackContext) -> int:
     reply_keyboard = [['add', 'lst', 'remove']]
 
     update.message.reply_text(
-        'Please choose a subcommand.'
-        '/cancel to end conversation.',
+        'Please choose a subcommand.\n/cancel to end conversation.',
         reply_markup=ReplyKeyboardMarkup(
             reply_keyboard, one_time_keyboard=True),
     )
@@ -37,37 +36,39 @@ def ptt(update: Update, context: CallbackContext) -> int:
 def cmd(update: Update, context: CallbackContext) -> int:
     if update.message.text == "lst":
         try:
-            db.cur.execute("SELECT id FROM ptt")
-            update.message.reply_text(
-                '\n'.join([i[0] for i in db.cur.fetchall()]),
-                reply_markup=ReplyKeyboardRemove(),)
+            with conn.cursor() as cur:
+                cur.execute("SELECT id FROM ptt;")
+                update.message.reply_text(
+                    '\n'.join([i[0] for i in cur]),
+                    reply_markup=ReplyKeyboardRemove(),)
         except Exception as e:
-            db.conn.rollback()
+            conn.rollback()
             update.message.reply_text(str(e),
-                                      reply_markup=ReplyKeyboardRemove(),)
+                                      reply_markup=ReplyKeyboardRemove())
 
         return ConversationHandler.END
     elif update.message.text == "add":
         update.message.reply_text(
-            'Please input ids.\n/cancel to end conversation.',
-            reply_markup=ReplyKeyboardRemove(),)
+            'Please input suspicious ids.\n/cancel to end conversation.',
+            reply_markup=ReplyKeyboardRemove())
         return ADD
     elif update.message.text == "remove":
         update.message.reply_text(
-            'Please input ids.\n/cancel to end conversation.',
-            reply_markup=ReplyKeyboardRemove(),)
+            'Please input innocent ids.\n/cancel to end conversation.',
+            reply_markup=ReplyKeyboardRemove())
         return REMOVE
 
 
 @restricted
 def add(update: Update, context: CallbackContext) -> int:
     try:
-        db.cur.executemany("INSERT INTO ptt (id) VALUES (%s)", [
-                           (i.strip(),) for i in update.message.text.split('\n')])
-        db.conn.commit()
+        with conn:
+            with conn.cursor() as cur:
+                cur.executemany("INSERT INTO ptt (id) VALUES (%s);", [
+                                (i.strip(),) for i in update.message.text.split('\n')])
         update.message.reply_text("Succesfully added.")
     except Exception as e:
-        db.conn.rollback()
+        conn.rollback()
         update.message.reply_text(str(e))
 
     return ConversationHandler.END
@@ -76,23 +77,26 @@ def add(update: Update, context: CallbackContext) -> int:
 @restricted
 def remove(update: Update, context: CallbackContext) -> int:
     try:
-        db.cur.executemany("DELETE FROM ptt WHERE id = %s", [
-                           (i.strip(),) for i in update.message.text.split('\n')])
-        db.conn.commit()
+        with conn:
+            with conn.cursor() as cur:
+                cur.executemany("DELETE FROM ptt WHERE id = %s;", [
+                                (i.strip(),) for i in update.message.text.split('\n')])
         update.message.reply_text("Succesfully removed.")
     except Exception as e:
-        db.conn.rollback()
+        conn.rollback()
         update.message.reply_text(str(e))
 
     return ConversationHandler.END
 
 
 def cancel(update: Update, context: CallbackContext) -> int:
+    update.message.reply_text('End of Conversation.',
+                              reply_markup=ReplyKeyboardRemove())
     return ConversationHandler.END
 
-
-db.cur.execute("CREATE TABLE IF NOT EXISTS ptt (id text PRIMARY KEY)")
-db.conn.commit()
+with conn:
+    with conn.cursor() as cur:
+        cur.execute("CREATE TABLE IF NOT EXISTS ptt (id text PRIMARY KEY);")
 
 conv_handler = ConversationHandler(
     entry_points=[CommandHandler('ptt', ptt)],
